@@ -15,6 +15,7 @@ class Home extends React.Component {
     }
 
     handleChange(e){
+        e.preventDefault();
         this.props.onChange(e.target.value);
     }
 
