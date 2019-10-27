@@ -16,6 +16,15 @@ export function requestsReducer( state={requests:[], loaded: false}, action){
     }
 }
 
+export function productsReducer( state={products:[], loaded: false}, action){
+    switch(action.type){
+        case 'PRODUCTS_LOADED':
+            return { products: action.products, loaded: true }
+        default:
+            return state;
+    }
+}
+
 export function secondReducer(state={'console': 'PS4'}, action){
     switch(action.type){
         case 'CHANGE':
@@ -28,7 +37,6 @@ export function secondReducer(state={'console': 'PS4'}, action){
 export function usersReducer(state={'users': [] }, action){
     switch(action.type){
         case 'LOADING':
-            console.log("loading fired! info: ", action);
             return {...state, loading: true };
         case 'LOADED_USERS':
             return { ...state, users: action.users.results }

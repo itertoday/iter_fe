@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 
 
 export const getUsers = () => {
-    console.log("getUsers() action");
     return { type: 'LOADING', }
 };
 
