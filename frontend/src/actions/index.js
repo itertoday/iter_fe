@@ -10,6 +10,10 @@ export const postRequest = (payload) => {
     return {type: 'POSTREQUEST_STARTED', payload }
 }
 
+export const postPrice = (payload) => {
+    return {type: 'PRICE_REQUEST', products:payload}
+}
+
 export const updateProductItems = (newProducts) =>{
     return {type: 'PRODUCT_UPDATE', products: newProducts}
 }

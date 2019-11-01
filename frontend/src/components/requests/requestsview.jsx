@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { getRequests, getProducts, postRequest, updateRequestForm, updateProductItems } from './../../actions';
+import { getRequests, getProducts, postRequest, updateRequestForm, updateProductItems, postPrice } from './../../actions';
 import { Tab, Row, Col, Nav, Container, Form, Button, Card } from 'react-bootstrap';
 
 const RequestItem = (props) => {
@@ -30,7 +30,7 @@ const ProductItem = (props) => {
     );
 }
 
-const RequestForm = ({onRequestSubmit, products, request, onFormChange, onProductUpdate, onPlusProduct, onMinusProduct }) => {
+const RequestForm = ({onRequestSubmit, products, request, onFormChange, onProductUpdate, onPlusProduct, onMinusProduct, price }) => {
     const { start_date, end_date, city, repeat, user, address, address2 } = request;
     return (
         <Form onSubmit={onRequestSubmit}>
@@ -43,7 +43,7 @@ const RequestForm = ({onRequestSubmit, products, request, onFormChange, onProduc
             <Row>
                 <Col md={4}></Col>
                 <Col md={{ span: 4, offset: 4 }} className="mt-3">
-                    <h3> Total: USD 12000</h3>
+                    <h3> Total: USD {price}</h3>
                 </Col>
             </Row>
 
@@ -101,21 +101,28 @@ class RequestView extends React.Component {
         const productId = e.target.dataset.product;
         const {products} = this.props;
         const [ product ] = products.filter(item => item.id === parseInt(productId) );
-        const newProduct = {...product, quantity:product.quantity + 1 };
-        let newProducts = products.filter(p => p.id !== newProduct.id).concat(newProduct);
-        newProducts = newProducts.sort((p1,p2) => (p1.id < p2.id)?-1:1);
-        this.props.dispatch(updateProductItems(newProducts));
-        
+        if (product.quantity  >= 0){
+            const newProduct = {...product, quantity:product.quantity + 1 };
+            let newProducts = products.filter(p => p.id !== newProduct.id).concat(newProduct);
+            newProducts = newProducts.sort((p1,p2) => (p1.id < p2.id)?-1:1);
+            this.props.dispatch(updateProductItems(newProducts));
+            const priceRequest = {products:newProducts.map(product=>{ return {quantity: product.quantity, product_type: product.product_type}})}
+            this.props.dispatch(postPrice(priceRequest));
+        }
     }
 
     handleMinusProduct(e){
         const productId = e.target.dataset.product;
         const {products} = this.props;
         const [ product ] = products.filter(item => item.id === parseInt(productId) );
-        const newProduct = {...product, quantity:product.quantity - 1 };
-        let newProducts = products.filter(p => p.id !== newProduct.id).concat(newProduct);
-        newProducts = newProducts.sort((p1,p2) => (p1.id > p2.id)?1:-1);
-        this.props.dispatch(updateProductItems(newProducts));
+        if (product.quantity - 1 >= 0){
+            const newProduct = {...product, quantity:product.quantity - 1 };
+            let newProducts = products.filter(p => p.id !== newProduct.id).concat(newProduct);
+            newProducts = newProducts.sort((p1,p2) => (p1.id > p2.id)?1:-1);
+            this.props.dispatch(updateProductItems(newProducts));
+            const priceRequest = {products:newProducts.map(product=>{ return {quantity: product.quantity, product_type: product.product_type}})}
+            this.props.dispatch(postPrice(priceRequest));
+        }
     }
 
     handleProductUpdate(product, count){
@@ -158,7 +165,7 @@ class RequestView extends React.Component {
     }
 
     render() {
-        const { userRequests: items, products, requestForm } = this.props;
+        const { userRequests: items, products, requestForm, price } = this.props;
         return (
             <Container className="mt-5">
                 <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -176,7 +183,7 @@ class RequestView extends React.Component {
                         <Col sm={9}>
                             <Tab.Content>
                                 <Tab.Pane eventKey="first">
-                                    <RequestForm products={products} onRequestSubmit={this.handleRequestSubmit} request={requestForm} onFormChange={this.handleFormChange} onProductUpdate={this.handleProductUpdate} onPlusProduct={this.handlePlusProduct} onMinusProduct={this.handleMinusProduct}/>
+                                    <RequestForm products={products} onRequestSubmit={this.handleRequestSubmit} request={requestForm} onFormChange={this.handleFormChange} onProductUpdate={this.handleProductUpdate} onPlusProduct={this.handlePlusProduct} onMinusProduct={this.handleMinusProduct} price={price}/>
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="second">
                                     <ul>
@@ -197,13 +204,15 @@ class RequestView extends React.Component {
 function mapState(state) {
     return { 'userRequests': state.requestsReducer.requests, 
              'products': state.productsReducer.products, 
-             'requestForm': state.requestsReducer.requestForm }
+             'requestForm': state.requestsReducer.requestForm,
+             'price': state.priceReducer.price }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     getRequests,
     getProducts,
     postRequest,
+    postPrice,
     dispatch
 },
 dispatch,)

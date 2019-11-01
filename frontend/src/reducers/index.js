@@ -54,3 +54,13 @@ export function usersReducer(state={'users': [] }, action){
             return state
     }
 }
+
+export function priceReducer(state={'price': 0, 'details':[]}, action){
+    switch(action.type){
+        case 'PRICE_RESPONSE':
+            console.log("yesss", action);
+            return {...state, price: action.price, loading: false }
+        default:
+            return state
+    }
+}
