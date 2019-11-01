@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import  { firstReducer, secondReducer, requestsReducer, usersReducer, productsReducer } from './reducers';
+import  { firstReducer, requestsReducer, usersReducer, productsReducer } from './reducers';
 
 import mySaga from './sagas';
 
@@ -35,7 +35,7 @@ export const Menu = () => {
 }
 
 const sagaMiddleware = createSagaMiddleware();
-let store = createStore(combineReducers({firstReducer, secondReducer, usersReducer, requestsReducer, productsReducer}), 
+let store = createStore(combineReducers({firstReducer, usersReducer, requestsReducer, productsReducer}), 
                         applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(mySaga);
 

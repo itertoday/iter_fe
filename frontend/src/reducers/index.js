@@ -7,10 +7,25 @@ export function firstReducer(state={'name': 'McArthur'}, action){
     }
 }
 
-export function requestsReducer( state={requests:[], loaded: false}, action){
+const initialFormState = {
+    start_date: new Date().toISOString(),
+    end_date: new Date().toISOString(),
+    repeat: false,
+    city: 'empty',
+    address: '',
+    address2: '',
+    user: 2,
+    items: [],
+}
+
+export function requestsReducer( state={requests:[], loaded: false, requestForm: initialFormState }, action){
     switch(action.type){
         case 'REQUESTS_LOADED':
-            return {requests: action.requests, loaded: true}
+            return {...state, requests: action.requests, loaded: true}
+        case 'REQUESTFORM_UPDATE':
+            return {...state, requestForm: action.form}
+        case 'POSTREQUEST_FINISHED':
+            return state
         default:
             return state;
     }
@@ -19,18 +34,13 @@ export function requestsReducer( state={requests:[], loaded: false}, action){
 export function productsReducer( state={products:[], loaded: false}, action){
     switch(action.type){
         case 'PRODUCTS_LOADED':
-            return { products: action.products, loaded: true }
+            const products = action.products.map(product => Object.assign({}, product, {quantity:0} ))
+            return { ...state, products, loaded: true }
+        case 'PRODUCT_UPDATE':
+                const newProducts = action.products;
+                return { ...state, products: newProducts, loaded: true }
         default:
             return state;
-    }
-}
-
-export function secondReducer(state={'console': 'PS4'}, action){
-    switch(action.type){
-        case 'CHANGE':
-            return { 'console': action.console }
-        default:
-            return state
     }
 }
 
