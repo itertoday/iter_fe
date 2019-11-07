@@ -8,27 +8,39 @@ export class Login extends React.Component {
     constructor(props){
         super(props);
         this.handleClick = this.handleClick.bind(this);
+        this.handleTransportClick = this.handleTransportClick.bind(this)
         this.state = {
-            redirect: false
+            redirect: false,
+            userType: "client"
         }
     }
 
     handleClick(e){
         e.preventDefault();
-        this.setState({redirect: true});
+        this.setState({redirect: true, userType: "client"});
         //Redirect to dashboard after validation (assuming everything is fine)
     }
 
-    renderRedirect(){
+    handleTransportClick(e){
+        e.preventDefault();
+        this.setState({redirect: true, userType: "transport"});
+    }
+
+    renderRedirect(userType){
+        console.log("redirected with", userType);
         if(this.state.redirect){
-            return <Redirect to="/dashboard" />;
+            return <Redirect to={{
+                pathname: "/dashboard",
+                state: { userType }
+            }} />;
         }
     }
 
     render() {
+        const {userType} = this.state;
         return (
         <Container className="container " >
-            {this.renderRedirect()}
+            {this.renderRedirect(userType)}
             <Row className="row align-items-center mx-md-n5">
                 <Col md={{ span: 6, offset: 3 }}>
                     <Form>
@@ -45,6 +57,9 @@ export class Login extends React.Component {
                         </Form.Group>
                         <Button variant="primary" type="submit" onClick={this.handleClick}>
                             Ingresar
+                    </Button>
+                    <Button variant="primary" type="submit" onClick={this.handleTransportClick}>
+                            Ingresar Transportista
                     </Button>
                     </Form>
                 </Col>

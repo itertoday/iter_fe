@@ -18,6 +18,16 @@ const initialFormState = {
     items: [],
 }
 
+
+export function ordersReducer(state={orders:[]}, action){
+    switch(action.type){
+        case 'ORDERS_LOADED':
+            return {...state, orders: action.orders, loaded: true};
+        default:
+            return state;
+    }
+}
+
 export function requestsReducer( state={requests:[], loaded: false, requestForm: initialFormState }, action){
     switch(action.type){
         case 'REQUESTS_LOADED':

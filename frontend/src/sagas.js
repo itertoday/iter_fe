@@ -1,5 +1,5 @@
 import { put, takeEvery, all } from 'redux-saga/effects';
-import  { USERS_URL, REQUESTS_URL, PRODUCTS_URL, PRICING_URL }  from './resource';
+import  { USERS_URL, REQUESTS_URL, ORDERS_URL, PRODUCTS_URL, PRICING_URL }  from './resource';
 
 
 function* fetchUsers(){
@@ -10,6 +10,11 @@ function* fetchUsers(){
 function* fetchRequests(){
     const requests = yield fetch(REQUESTS_URL).then( res => res.json());
     yield put({type: "REQUESTS_LOADED", requests});
+}
+
+function* fetchOrders(){
+    const orders = yield fetch(ORDERS_URL).then( res => res.json());
+    yield put({type: "ORDERS_LOADED", orders});
 }
 
 function* fetchProducts(){
@@ -46,6 +51,10 @@ function* actionProductsWatcher(){
     yield takeEvery('PRODUCTS_LOADING', fetchProducts);
 }
 
+function* actionOrderssWatcher(){
+    yield takeEvery('ORDERS_LOADING', fetchOrders);
+}
+
 function* actionPostRequestsWatcher(){
     yield takeEvery('POSTREQUEST_STARTED', doPostRequest);
 }
@@ -55,5 +64,5 @@ function* actionPostPriceProductWatcher(){
 }
 
 export default function* mySaga(){
-    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher()])
+    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrderssWatcher()])
 }

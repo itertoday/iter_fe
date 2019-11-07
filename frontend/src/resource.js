@@ -1,8 +1,12 @@
-export const USERS_URL = "https://randomuser.me/api/?results=5000";
-export const REQUESTS_URL = "http://localhost:8000/requests/";
-export const PRODUCTS_URL = "http://localhost:8000/products/";
-export const PRICING_URL = "http://localhost:8000/pricing/";
+import {server} from '../package.json';
 
+const { root } = server;
+
+export const USERS_URL = "https://randomuser.me/api/?results=5000";
+export const REQUESTS_URL = `${root}/requests/`;
+export const PRODUCTS_URL = `${root}/products/`;
+export const PRICING_URL = `${root}/pricing/`;
+export const ORDERS_URL = `${root}/orders/`;
 
 /*
 

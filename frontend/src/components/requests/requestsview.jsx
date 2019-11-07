@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { getRequests, getProducts, postRequest, updateRequestForm, updateProductItems, postPrice } from './../../actions';
+import { getRequests, getProducts, getOrders, postRequest, updateRequestForm, updateProductItems, postPrice } from './../../actions';
 import { Tab, Row, Col, Nav, Container, Form, Button, Card } from 'react-bootstrap';
+import { OrderItem } from '../common';
 
-const RequestItem = (props) => {
-    return <div className="request-item"> Request para la ciudad: {props.data.city}, items: {props.data.items.length}</div>
-}
 
 const ProductItem = (props) => {
 
@@ -18,7 +16,6 @@ const ProductItem = (props) => {
                 <Card.Img variant="top" src={props.item.image_url} style={{ width: '200px', height: '200px' }} className="ml-5 mt-4" />
                 <Card.Body>
                     <Card.Title>{props.item.name} ({props.item.product_type})</Card.Title>
-                    <Card.Text> Descripcion del producto (soon) </Card.Text>
                     {/* <Button variant="primary" onClick={() => { setCount(count + 1); props.onProductItemClick(props.item, count); } } >Agregar</Button> */}
                     <Button variant="primary" onClick={props.onPlusProduct} data-product={props.item.id} >  + </Button>
                     <Button variant="secondary" onClick={props.onMinusProduct} data-product={props.item.id} > - </Button>
@@ -89,10 +86,8 @@ const RequestForm = ({onRequestSubmit, products, request, onFormChange, onProduc
 class RequestView extends React.Component {
     constructor(props) {
         super(props);
-        this.handlerAddProduct = this.handlerAddProduct.bind(this);
         this.handleRequestSubmit = this.handleRequestSubmit.bind(this);
         this.handleFormChange = this.handleFormChange.bind(this);
-        this.handleProductUpdate = this.handleProductUpdate.bind(this);
         this.handlePlusProduct = this.handlePlusProduct.bind(this);
         this.handleMinusProduct = this.handleMinusProduct.bind(this);
     }
@@ -125,29 +120,11 @@ class RequestView extends React.Component {
         }
     }
 
-    handleProductUpdate(product, count){
-        console.log("vamos bien: ", product, count);
-        // const { items } = this.props.RequestForm;
-        // const obj = {quantity: count, product: product.id }
-        // if (items === []){
-        //     items.append(obj)
-        // }else {
-
-            
-        // }
-
-        
-    }
-
     handleFormChange(e){
         e.preventDefault();
         const { name, value } = e.target;
         const newRequestForm = {...this.props.requestForm, ...{[name]: value}};
         this.props.dispatch(updateRequestForm(newRequestForm));
-    }
-
-    handlerAddProduct(e) {
-        e.preventDefault();
     }
 
     handleRequestSubmit(e){
@@ -162,10 +139,11 @@ class RequestView extends React.Component {
     componentDidMount() {
         this.props.getRequests();
         this.props.getProducts();
+        this.props.getOrders();
     }
 
     render() {
-        const { userRequests: items, products, requestForm, price } = this.props;
+        const { userOrders: items, products, requestForm, price } = this.props;
         return (
             <Container className="mt-5">
                 <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -188,7 +166,7 @@ class RequestView extends React.Component {
                                 <Tab.Pane eventKey="second">
                                     <ul>
                                         {items.map((item, i) => {
-                                            return <li key={i}><RequestItem data={item} /></li>;
+                                            return <li key={i}><OrderItem data={item} /></li>;
                                         })}
                                     </ul>
                                 </Tab.Pane>
@@ -202,7 +180,8 @@ class RequestView extends React.Component {
 }
 
 function mapState(state) {
-    return { 'userRequests': state.requestsReducer.requests, 
+    return { 'userRequests': state.requestsReducer.requests,
+             'userOrders': state.ordersReducer.orders, 
              'products': state.productsReducer.products, 
              'requestForm': state.requestsReducer.requestForm,
              'price': state.priceReducer.price }
@@ -211,6 +190,7 @@ function mapState(state) {
 const mapDispatchToProps = dispatch => bindActionCreators({
     getRequests,
     getProducts,
+    getOrders,
     postRequest,
     postPrice,
     dispatch

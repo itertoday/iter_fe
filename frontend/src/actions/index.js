@@ -6,6 +6,10 @@ export const getProducts = () => {
     return {type: 'PRODUCTS_LOADING', }
 }
 
+export const getOrders = () => {
+    return {type: 'ORDERS_LOADING', }
+}
+
 export const postRequest = (payload) => {
     return {type: 'POSTREQUEST_STARTED', payload }
 }
