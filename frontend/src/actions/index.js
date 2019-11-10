@@ -25,3 +25,7 @@ export const updateProductItems = (newProducts) =>{
 export const updateRequestForm = (form) =>{
    return  {type: 'REQUESTFORM_UPDATE', form }
 }
+
+export const updateOrder = (orderId) => {
+	return { type: 'ORDERS_UPDATING', orderId }
+}

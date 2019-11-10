@@ -166,7 +166,7 @@ class RequestView extends React.Component {
                                 <Tab.Pane eventKey="second">
                                     <ul>
                                         {items.map((item, i) => {
-                                            return <li key={i}><OrderItem data={item} /></li>;
+                                            return <li key={i}><OrderItem data={item} readonly={true} /></li>;
                                         })}
                                     </ul>
                                 </Tab.Pane>

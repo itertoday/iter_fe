@@ -23,6 +23,8 @@ export function ordersReducer(state={orders:[]}, action){
     switch(action.type){
         case 'ORDERS_LOADED':
             return {...state, orders: action.orders, loaded: true};
+        case 'ORDER_PATCH_DONE':
+            return {...state, result: action.result, loaded: true};
         default:
             return state;
     }
@@ -68,7 +70,6 @@ export function usersReducer(state={'users': [] }, action){
 export function priceReducer(state={'price': 0, 'details':[]}, action){
     switch(action.type){
         case 'PRICE_RESPONSE':
-            console.log("yesss", action);
             return {...state, price: action.price, loading: false }
         default:
             return state

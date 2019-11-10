@@ -39,6 +39,16 @@ function* doPostPriceProduct({products}){
     yield put({type: 'PRICE_RESPONSE', price})
 }
 
+function* patchOrder({orderId}){
+    const result = yield fetch(`${ORDERS_URL}${orderId}/`, { method: 'PATCH',
+                                                              headers: {'Content-Type': 'application/json'},
+                                                              body: JSON.stringify({status: "accepted"})
+                                                          }).then(res=>res.json())
+    yield put({type: 'ORDER_PATCH_DONE', result});
+
+}
+
+
 function* actionUserWatcher() {
     yield takeEvery('LOADING', fetchUsers);
 }
@@ -51,7 +61,7 @@ function* actionProductsWatcher(){
     yield takeEvery('PRODUCTS_LOADING', fetchProducts);
 }
 
-function* actionOrderssWatcher(){
+function* actionOrdersWatcher(){
     yield takeEvery('ORDERS_LOADING', fetchOrders);
 }
 
@@ -63,6 +73,10 @@ function* actionPostPriceProductWatcher(){
     yield takeEvery('PRICE_REQUEST', doPostPriceProduct);
 }
 
+function* actionPatchOrderWatcher(){
+    yield takeEvery('ORDERS_UPDATING', patchOrder);
+}
+
 export default function* mySaga(){
-    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrderssWatcher()])
+    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher()])
 }
