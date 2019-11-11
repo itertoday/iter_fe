@@ -56,17 +56,6 @@ export function productsReducer( state={products:[], loaded: false}, action){
     }
 }
 
-export function usersReducer(state={'users': [] }, action){
-    switch(action.type){
-        case 'LOADING':
-            return {...state, loading: true };
-        case 'LOADED_USERS':
-            return { ...state, users: action.users.results }
-        default:
-            return state
-    }
-}
-
 export function priceReducer(state={'price': 0, 'details':[]}, action){
     switch(action.type){
         case 'PRICE_RESPONSE':
