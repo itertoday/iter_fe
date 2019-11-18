@@ -1,5 +1,6 @@
 import { put, takeEvery, all } from 'redux-saga/effects';
 import  { REQUESTS_URL, ORDERS_URL, PRODUCTS_URL, PRICING_URL }  from './resource';
+import { NotificationManager } from 'react-notifications';
 
 
 function* fetchRequests(){
@@ -21,7 +22,10 @@ function* doPostRequest({payload}){ //Destructuring the action
     const request = yield fetch(REQUESTS_URL, { method: 'POST', 
                                                 headers: { 'Content-Type': 'application/json'},
                                                 body: JSON.stringify(payload) 
-                                            }).then( res => res.json()).then(data => data.results);
+                                            }).then( res => res.json()).then(data => {
+                                                NotificationManager.success('Se ha creado una orden nueva!', 'Successful!', 2000);
+                                                return data.results;
+                                            });
     yield put({type: "POSTREQUEST_FINISHED", request});
 
 }

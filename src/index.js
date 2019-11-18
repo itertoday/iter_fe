@@ -12,6 +12,8 @@ import createSagaMiddleware from 'redux-saga';
 import  { firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer } from './reducers';
 import mySaga from './sagas';
 
+import 'react-notifications/lib/notifications.css';
+import { NotificationContainer } from 'react-notifications';
 
 export const Menu = () => {
     return <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -53,6 +55,7 @@ ReactDOM.render(<>
                     <Home />
                 </Route>
             </Switch>
+            <NotificationContainer />
         </Router>
     </Provider>
 </>, document.getElementById('root'));
