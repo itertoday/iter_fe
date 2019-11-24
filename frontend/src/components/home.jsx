@@ -1,5 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 
 
 export const getUsers = () => {
@@ -23,19 +24,28 @@ class Home extends React.Component {
     }
 
     render() {
-        const {userName, users } = this.props;
+        //const {userName, users } = this.props;
+
+        const { error, isAuthenticated, token } = this.props;
+
+		    if (!isAuthenticated) {
+		      return <Redirect to="/login" />;
+		    }
+
         return (
             <div className="Home">
-                <p>this is home. But also displaying redux value: {userName}. Amount of users: {users.length}</p>
-                <input type="text" placeholder="Enter new name" onChange={this.handleChange} />
-                <button onClick={this.handleUserClick}>Load Users</button>
+                <h1>This is the HOME page </h1>
             </div>
         )
     }
 }
 
-function mapState(state) {
+/*function mapState(state) {
     return { 'userName': state.firstReducer.name, users: state.usersReducer.users }
+}*/
+
+function mapState(state) {
+  return { 'token':state.authReducer.token, 'isAuthenticated':state.authReducer.isAuthenticated, 'error':state.authReducer.error }
 }
 
 // function mapDispatch(dispatch) {

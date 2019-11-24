@@ -75,3 +75,27 @@ export function priceReducer(state={'price': 0, 'details':[]}, action){
             return state
     }
 }
+
+export function authReducer(state={token: localStorage.getItem('token'), isAuthenticated: localStorage.getItem('token')?true:false, error: null, userType:'client'}, action){
+    switch (action.type) {
+	    case 'AUTH_SUCCESS':
+	      return { ...state, isAuthenticated:true, token: action.payload };
+	    case 'AUTH_FAILURE':
+	      return { ...state, error: action.payload }
+	    default:
+	      return state;
+  }
+}
+
+export function registrationReducer(state={url:"", registrationError:null}, action){
+    switch (action.type) {
+	    case 'REGISTRATION_SUCCESS':
+	      return { ...state, url: action.payload };
+	    case 'REGISTRATION_FAILURE':
+	      return { ...state, registrationError: action.payload }
+	    default:
+	      return state;
+  }
+}
+
+

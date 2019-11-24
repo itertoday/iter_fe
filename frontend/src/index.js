@@ -2,14 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Home from './components/home';
-import { Login, Register } from './components/login';
+import Login from './components/login';
+import Register from './components/register';
 import Dashboard  from './components/dashboard';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import  { firstReducer, requestsReducer, usersReducer, productsReducer, priceReducer, ordersReducer } from './reducers';
+import  { firstReducer, requestsReducer, usersReducer, productsReducer, priceReducer, ordersReducer, authReducer, registrationReducer } from './reducers';
 import mySaga from './sagas';
 
 
@@ -35,7 +36,7 @@ export const Menu = () => {
 }
 
 const sagaMiddleware = createSagaMiddleware();
-let store = createStore(combineReducers({firstReducer, usersReducer, requestsReducer, productsReducer, priceReducer, ordersReducer}), 
+let store = createStore(combineReducers({firstReducer, usersReducer, requestsReducer, productsReducer, priceReducer, ordersReducer, authReducer, registrationReducer}), 
                         applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(mySaga);
 
