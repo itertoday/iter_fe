@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { getOrders, updateOrder } from './../../actions';
+import { getTransportOrders, updateOrder } from './../../actions';
 import { Tabs, Tab } from 'react-bootstrap';
 import { OrderItem } from '../common';
 
@@ -12,7 +12,7 @@ class TransportView extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getOrders();
+        this.props.getTransportOrders();
     }
 
     handleAccept(e){
@@ -21,11 +21,20 @@ class TransportView extends React.Component {
         this.props.updateOrder(orderId);
     }
 
-    render() {
-        const activeOrders = this.props.userOrders.filter(item => item.status === 'pending');
-        const doneOrders   = this.props.userOrders.filter(item => item.status === 'shipped');
-        const acceptedOrders = this.props.userOrders.filter(item => item.status === 'accepted');
+    getActiveOrders(items, status){
+        const rightNow = new Date();
+        rightNow.setHours(0,0,0);
+        return items.filter(
+                    item => new Date(item.request.start_date) > rightNow && rightNow <= new Date(item.request.end_date)
+                   ).filter(
+                    item => item.status === status
+                );
+    }
 
+    render() {
+        const activeOrders = this.getActiveOrders(this.props.userOrders, 'pending');
+        const acceptedOrders = this.getActiveOrders(this.props.userOrders, 'accepted');
+        const doneOrders   = this.props.userOrders.filter(item => item.status === 'shipped');
 
         return (
             <Tabs defaultActiveKey="activeOrders" id="uncontrolled-tab-example" className="mt-5">
@@ -44,11 +53,11 @@ class TransportView extends React.Component {
 }
 
 function mapState(state) {
-    return { 'userOrders': state.ordersReducer.orders, }
+    return { 'userOrders': state.ordersReducer.transportOrders, }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    getOrders,
+    getTransportOrders,
     updateOrder,
     dispatch
 },

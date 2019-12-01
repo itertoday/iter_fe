@@ -11,6 +11,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import  { firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer } from './reducers';
 import mySaga from './sagas';
+import {  NotifyClientReader } from './common';
 
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer } from 'react-notifications';
@@ -40,6 +41,10 @@ const sagaMiddleware = createSagaMiddleware();
 let store = createStore(combineReducers({firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer}), 
                         applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(mySaga);
+
+const onMessage = (message) => { console.log("well done chiqui", message)}
+let client = new NotifyClientReader(onMessage);
+client.onMessage = onMessage;
 
 ReactDOM.render(<>
     <Provider store = {store}>

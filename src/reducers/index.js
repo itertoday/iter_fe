@@ -14,15 +14,16 @@ const initialFormState = {
     city: 'empty',
     address: '',
     address2: '',
-    user: 2,
+    user: 5,
     items: [],
 }
 
-
-export function ordersReducer(state={orders:[]}, action){
+export function ordersReducer(state={orders:[], transportOrders: []}, action){
     switch(action.type){
         case 'ORDERS_LOADED':
             return {...state, orders: action.orders, loaded: true};
+        case 'TRANSPORT_ORDERS_LOADED':
+                return {...state, transportOrders: action.orders, loaded: true};
         case 'ORDER_PATCH_DONE':
             return {...state, result: action.result, loaded: true};
         default:
@@ -33,11 +34,13 @@ export function ordersReducer(state={orders:[]}, action){
 export function requestsReducer( state={requests:[], loaded: false, requestForm: initialFormState }, action){
     switch(action.type){
         case 'REQUESTS_LOADED':
-            return {...state, requests: action.requests, loaded: true}
+            return {...state, requests: action.requests, loaded: false}
         case 'REQUESTFORM_UPDATE':
             return {...state, requestForm: action.form}
         case 'POSTREQUEST_FINISHED':
-            return state
+            return {...state, loaded: false}
+        case 'POSTREQUEST_STARTED':
+            return {...state, loaded: true}
         default:
             return state;
     }

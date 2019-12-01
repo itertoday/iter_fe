@@ -1,5 +1,5 @@
 import { put, takeEvery, all } from 'redux-saga/effects';
-import  { REQUESTS_URL, ORDERS_URL, PRODUCTS_URL, PRICING_URL }  from './resource';
+import  { REQUESTS_URL, CLIENT_ORDERS_URL, TRANSPORT_ORDERS_URL, PRODUCTS_URL, PRICING_URL }  from './resource';
 import { NotificationManager } from 'react-notifications';
 
 
@@ -9,22 +9,30 @@ function* fetchRequests(){
 }
 
 function* fetchOrders(){
-    const orders = yield fetch(ORDERS_URL).then( res => res.json());
+    const orders = yield fetch(CLIENT_ORDERS_URL).then( res => res.json());
     yield put({type: "ORDERS_LOADED", orders});
 }
+
+function* fetchTransportOrders(){ /* Curry this function */ 
+    const orders = yield fetch(TRANSPORT_ORDERS_URL).then( res => res.json());
+    yield put({type: "TRANSPORT_ORDERS_LOADED", orders});
+}
+
 
 function* fetchProducts(){
     const products = yield fetch(PRODUCTS_URL).then( res => res.json()).then(data => data.results);
     yield put({type: "PRODUCTS_LOADED", products});
 }
 
-function* doPostRequest({payload}){ //Destructuring the action
+function* doPostRequest({payload}){ 
     const request = yield fetch(REQUESTS_URL, { method: 'POST', 
                                                 headers: { 'Content-Type': 'application/json'},
                                                 body: JSON.stringify(payload) 
                                             }).then( res => res.json()).then(data => {
-                                                NotificationManager.success('Se ha creado una orden nueva!', 'Successful!', 2000);
+                                                NotificationManager.success('Se ha creado una orden nueva!', 'Successful!', 12000);
                                                 return data.results;
+                                            }).catch(err=>{
+                                                NotificationManager.error ('Ocurrió un error al intentar crear la orden.', 'Error!', 12000);
                                             });
     yield put({type: "POSTREQUEST_FINISHED", request});
 
@@ -39,7 +47,7 @@ function* doPostPriceProduct({products}){
 }
 
 function* patchOrder({orderId}){
-    const result = yield fetch(`${ORDERS_URL}${orderId}/`, { method: 'PATCH',
+    const result = yield fetch(`${CLIENT_ORDERS_URL}${orderId}/`, { method: 'PATCH',
                                                               headers: {'Content-Type': 'application/json'},
                                                               body: JSON.stringify({status: "accepted"})
                                                           }).then(res=>res.json())
@@ -71,6 +79,10 @@ function* actionPatchOrderWatcher(){
     yield takeEvery('ORDERS_UPDATING', patchOrder);
 }
 
+function* actionTransportOrdersWatcher(){
+    yield takeEvery('TRANSPORT_ORDERS_LOADING', fetchTransportOrders);
+}
+
 export default function* mySaga(){
-    yield all([actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher()])
+    yield all([actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher(), actionTransportOrdersWatcher()])
 }

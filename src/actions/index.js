@@ -10,6 +10,10 @@ export const getOrders = () => {
     return {type: 'ORDERS_LOADING', }
 }
 
+export const getTransportOrders = () => {
+    return {type: 'TRANSPORT_ORDERS_LOADING', }
+}
+
 export const postRequest = (payload) => {
     return {type: 'POSTREQUEST_STARTED', payload }
 }

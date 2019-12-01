@@ -2,7 +2,7 @@
   "name": "frontend",
   "server": {
     "root": "http://localhost:8000",
-    "notification": ""
+    "notification": "ws://localhost:8888/ws"
   },
   "version": "0.1.0",
   "private": true,

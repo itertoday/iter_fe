@@ -39,7 +39,6 @@ const RequestForm = ({ onRequestSubmit, products, request, onFormChange, onProdu
                     })}
                 </Row>
                 <Row>
-                    <Col md={4}></Col>
                     <Col className="text-right mt-5">
                         <h3> Total: $ {price}</h3>
                     </Col>
@@ -80,12 +79,17 @@ const RequestForm = ({ onRequestSubmit, products, request, onFormChange, onProdu
                 </Row>
                 <Button variant="primary" type="submit"> Submit </Button>
             </Form>
-
         </div>
     );
 }
 
 const LoadingForm = LoadingComponent(RequestForm);
+
+const Message = (props) => <div>{props.isLoaded}</div>
+
+const LoadingRequest = LoadingComponent(Message);
+
+
 
 class RequestView extends React.Component {
     constructor(props) {
@@ -146,10 +150,18 @@ class RequestView extends React.Component {
         this.props.getOrders();
     }
 
+    
+
     render() {
         const { userOrders: items, products, requestForm, price } = this.props;
+        const summaryOrders = (items.length > 0) ? <ul>
+        {items.map((item, i) => {
+            return <li key={i}><OrderItem data={item} readonly={true} /></li>;
+        })}
+    </ul> : <Card><Card.Body>Aún no ha creado órdenes</Card.Body></Card>
         return (
             <Container className="mt-5">
+                <LoadingRequest isLoaded = {!this.props.requestLoading} />
                 <Tab.Container id="left-tabs-example" defaultActiveKey="first">
                     <Row>
                         <Col sm={3}>
@@ -165,14 +177,18 @@ class RequestView extends React.Component {
                         <Col sm={9}>
                             <Tab.Content>
                                 <Tab.Pane eventKey="first">
-                                    <LoadingForm isLoaded={this.props.productsLoaded} products={products} onRequestSubmit={this.handleRequestSubmit} request={requestForm} onFormChange={this.handleFormChange} onProductUpdate={this.handleProductUpdate} onPlusProduct={this.handlePlusProduct} onMinusProduct={this.handleMinusProduct} price={price} />
+                                    <LoadingForm isLoaded={this.props.productsLoaded} 
+                                                 products={products} 
+                                                 onRequestSubmit={this.handleRequestSubmit} 
+                                                 request={requestForm} 
+                                                 onFormChange={this.handleFormChange} 
+                                                 onProductUpdate={this.handleProductUpdate} 
+                                                 onPlusProduct={this.handlePlusProduct}
+                                                 onMinusProduct={this.handleMinusProduct} 
+                                                 price={price} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="second">
-                                    <ul>
-                                        {items.map((item, i) => {
-                                            return <li key={i}><OrderItem data={item} readonly={true} /></li>;
-                                        })}
-                                    </ul>
+                                   {summaryOrders}
                                 </Tab.Pane>
                             </Tab.Content>
                         </Col>
@@ -190,6 +206,7 @@ function mapState(state) {
         'products': state.productsReducer.products,
         'productsLoaded': state.productsReducer.loaded,
         'requestForm': state.requestsReducer.requestForm,
+        'requestLoading': state.requestsReducer.loaded,
         'price': state.priceReducer.price
     }
 }

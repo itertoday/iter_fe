@@ -10,3 +10,12 @@ export const LoadingComponent = (Component) => {
         return <Spinner />
     };
 }
+
+export class NotifyClientReader {
+    constructor(onMessage){
+        this.url = 'ws://localhost:8888/ws';
+        this.ws = new WebSocket(this.url);
+        this.ws.onmessage = onMessage;   
+    }
+    
+}
