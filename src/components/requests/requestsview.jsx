@@ -89,7 +89,25 @@ const Message = (props) => <div>{props.isLoaded}</div>
 
 const LoadingRequest = LoadingComponent(Message);
 
+const TrackingForm = () => {
+    return <div>
+        <Form>
+            <Row>
+                <Col>
+                    <Form.Group controlId="formStartDate">
+                        <Form.Label>Revise el estado de su envío</Form.Label>
+                        <Form.Control type="text" name="tracker"  placeholder="Inserte Tracker" />
+                        {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
+                    </Form.Group>
+                </Col>
+            </Row>
+        </Form>
+    </div>
+}
 
+const MapTrackingForm = () => {
+    return <div>Colocar mapa aquí</div>
+}
 
 class RequestView extends React.Component {
     constructor(props) {
@@ -150,18 +168,16 @@ class RequestView extends React.Component {
         this.props.getOrders();
     }
 
-    
-
     render() {
         const { userOrders: items, products, requestForm, price } = this.props;
         const summaryOrders = (items.length > 0) ? <ul>
-        {items.map((item, i) => {
-            return <li key={i}><OrderItem data={item} readonly={true} /></li>;
-        })}
-    </ul> : <Card><Card.Body>Aún no ha creado órdenes</Card.Body></Card>
+            {items.map((item, i) => {
+                return <li key={i}><OrderItem data={item} readonly={true} /></li>;
+            })}
+        </ul> : <Card><Card.Body>Aún no ha creado órdenes</Card.Body></Card>
         return (
             <Container className="mt-5">
-                <LoadingRequest isLoaded = {!this.props.requestLoading} />
+                <LoadingRequest isLoaded={!this.props.requestLoading} />
                 <Tab.Container id="left-tabs-example" defaultActiveKey="first">
                     <Row>
                         <Col sm={3}>
@@ -170,25 +186,32 @@ class RequestView extends React.Component {
                                     <Nav.Link eventKey="first">Nuevo Servicio</Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey="second">Ultimos Servicios</Nav.Link>
+                                    <Nav.Link eventKey="second">Últimos Servicios</Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey="third">Tracking</Nav.Link>
                                 </Nav.Item>
                             </Nav>
                         </Col>
                         <Col sm={9}>
                             <Tab.Content>
                                 <Tab.Pane eventKey="first">
-                                    <LoadingForm isLoaded={this.props.productsLoaded} 
-                                                 products={products} 
-                                                 onRequestSubmit={this.handleRequestSubmit} 
-                                                 request={requestForm} 
-                                                 onFormChange={this.handleFormChange} 
-                                                 onProductUpdate={this.handleProductUpdate} 
-                                                 onPlusProduct={this.handlePlusProduct}
-                                                 onMinusProduct={this.handleMinusProduct} 
-                                                 price={price} />
+                                    <LoadingForm isLoaded={this.props.productsLoaded}
+                                        products={products}
+                                        onRequestSubmit={this.handleRequestSubmit}
+                                        request={requestForm}
+                                        onFormChange={this.handleFormChange}
+                                        onProductUpdate={this.handleProductUpdate}
+                                        onPlusProduct={this.handlePlusProduct}
+                                        onMinusProduct={this.handleMinusProduct}
+                                        price={price} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="second">
-                                   {summaryOrders}
+                                    {summaryOrders}
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="third">
+                                    <TrackingForm />
+                                    <MapTrackingForm />
                                 </Tab.Pane>
                             </Tab.Content>
                         </Col>
