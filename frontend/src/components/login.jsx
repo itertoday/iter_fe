@@ -78,50 +78,6 @@ export class Login extends React.Component {
     }
 }
 
-export const Register = () => (
-    <Container className="register">
-        <Row>
-            <Col lg="6">
-                <h4>Soy Cliente</h4>
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="cliente_correo">Correo</label>
-                        <input type="email" className="form-control" id="cliente_email" aria-describedby="emailHelp" placeholder="Ingrese correo" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Clave</label>
-                        <input type="password" className="form-control" id="cli-clave1" placeholder="Clave" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Confirmar Clave</label>
-                        <input type="password" className="form-control" id="cli-clave2" placeholder="Clave" />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary">Registrar</button>
-                </form>
-            </Col>
-            <Col lg="6">
-                <h4>Soy Transportista</h4>
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="transp_correo">Correo</label>
-                        <input type="email" className="form-control" id="transp_correo" aria-describedby="emailHelp" placeholder="Ingrese correo" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Clave</label>
-                        <input type="password" className="form-control" id="clave1" placeholder="Clave" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Confirmar Clave</label>
-                        <input type="password" className="form-control" id="clave2" placeholder="Clave" />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Registrar</button>
-                </form>
-            </Col>
-        </Row>
-    </Container>)
-
-
 function mapState(state) {
   return { 'token':state.authReducer.token, 'isAuthenticated':state.authReducer.isAuthenticated, 'error':state.authReducer.error, 'userType':state.authReducer.userType }
 }

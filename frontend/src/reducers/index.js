@@ -84,6 +84,17 @@ export function authReducer(state={token: localStorage.getItem('token'), isAuthe
 	      return { ...state, error: action.payload }
 	    default:
 	      return state;
+  	}
+}
+
+export function logoutReducer(state={token: localStorage.getItem('token'), isAuthenticated: localStorage.getItem('token')?true:false, error: null}, action){
+	switch (action.type) {
+    case 'LOGOUT_SUCCESS':
+      return { ...state, isAuthenticated:false, token: null };
+    case 'LOGOUT_FAILURE':
+      return { ...state, error: action.payload }
+    default:
+      return state;
   }
 }
 
