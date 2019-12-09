@@ -27,7 +27,6 @@ export class Login extends React.Component {
     }
 
     renderRedirect(userType){
-        console.log("redirected with", userType);
         if(this.state.redirect){
             return <Redirect to={{
                 pathname: "/dashboard",

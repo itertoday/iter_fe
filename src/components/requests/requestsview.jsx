@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getRequests, getProducts, getOrders, postRequest, updateRequestForm, updateProductItems, postPrice } from './../../actions';
+import { getRequests, getProducts, getOrders, postRequest, updateRequestForm, updateProductItems, postPrice, updateTabKey } from './../../actions';
 import { Tab, Row, Col, Nav, Container, Form, Button, Card } from 'react-bootstrap';
 import { OrderItem } from '../common';
 import { LoadingComponent } from '../../common';
@@ -116,6 +116,8 @@ class RequestView extends React.Component {
         this.handleFormChange = this.handleFormChange.bind(this);
         this.handlePlusProduct = this.handlePlusProduct.bind(this);
         this.handleMinusProduct = this.handleMinusProduct.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.toOrderView = this.toOrderView.bind(this);
     }
 
     handlePlusProduct(e) {
@@ -157,11 +159,20 @@ class RequestView extends React.Component {
         e.preventDefault();
         const { requestForm: payload } = this.props;
         const { products } = this.props;
-        const items = products.map((product) => { return { product: product.id, quantity: product.quantity } })
+        const items = products.map((product) => { return { product: product.id, quantity: product.quantity } });
         payload.items = items;
         this.props.postRequest(payload);
+        this.props.getOrders();
+        setTimeout(this.toOrderView, 3000);
     }
 
+    handleSelect(key){
+        this.props.updateTabKey(key);
+    }
+
+    toOrderView(){
+        this.setState({ key:'second' });
+    }
     componentDidMount() {
         this.props.getRequests();
         this.props.getProducts();
@@ -169,7 +180,7 @@ class RequestView extends React.Component {
     }
 
     render() {
-        const { userOrders: items, products, requestForm, price } = this.props;
+        const { userOrders: items, products, requestForm, price, redirect, tabKey } = this.props;
         const summaryOrders = (items.length > 0) ? <ul>
             {items.map((item, i) => {
                 return <li key={i}><OrderItem data={item} readonly={true} /></li>;
@@ -178,7 +189,8 @@ class RequestView extends React.Component {
         return (
             <Container className="mt-5">
                 <LoadingRequest isLoaded={!this.props.requestLoading} />
-                <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+                <p>Cambio: {this.props.requestRedirect?"yes":"no"}</p>
+                <Tab.Container id="left-tabs-example"  activeKey={tabKey}  defaultKey="first" onSelect={this.handleSelect}>
                     <Row>
                         <Col sm={3}>
                             <Nav variant="pills" className="flex-column">
@@ -201,7 +213,6 @@ class RequestView extends React.Component {
                                         onRequestSubmit={this.handleRequestSubmit}
                                         request={requestForm}
                                         onFormChange={this.handleFormChange}
-                                        onProductUpdate={this.handleProductUpdate}
                                         onPlusProduct={this.handlePlusProduct}
                                         onMinusProduct={this.handleMinusProduct}
                                         price={price} />
@@ -229,8 +240,10 @@ function mapState(state) {
         'products': state.productsReducer.products,
         'productsLoaded': state.productsReducer.loaded,
         'requestForm': state.requestsReducer.requestForm,
+        'requestRedirect': state.requestsReducer.redirect,
         'requestLoading': state.requestsReducer.loaded,
-        'price': state.priceReducer.price
+        'price': state.priceReducer.price,
+        'tabKey': state.tabReducer.key
     }
 }
 
@@ -240,6 +253,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     getOrders,
     postRequest,
     postPrice,
+    updateTabKey,
     dispatch
 },
     dispatch)

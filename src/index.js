@@ -9,8 +9,9 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import  { firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer } from './reducers';
+import  { firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer } from './reducers';
 import mySaga from './sagas';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import {  NotifyClientReader } from './common';
 
 import 'react-notifications/lib/notifications.css';
@@ -38,13 +39,13 @@ export const Menu = () => {
 }
 
 const sagaMiddleware = createSagaMiddleware();
-let store = createStore(combineReducers({firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer}), 
-                        applyMiddleware(sagaMiddleware));
+let store = createStore( combineReducers({firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer}),
+                         composeWithDevTools(applyMiddleware(sagaMiddleware)) );
 sagaMiddleware.run(mySaga);
 
-const onMessage = (message) => { console.log("well done chiqui", message)}
+/*const onMessage = (message) => { console.log("well done chiqui", message)}
 let client = new NotifyClientReader(onMessage);
-client.onMessage = onMessage;
+client.onMessage = onMessage;*/
 
 ReactDOM.render(<>
     <Provider store = {store}>

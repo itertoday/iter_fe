@@ -33,3 +33,7 @@ export const updateRequestForm = (form) =>{
 export const updateOrder = (orderId) => {
 	return { type: 'ORDERS_UPDATING', orderId }
 }
+
+export const updateTabKey = (key) => {
+    return { type: 'KEY_SENT', key }
+}

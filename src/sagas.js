@@ -18,7 +18,6 @@ function* fetchTransportOrders(){ /* Curry this function */
     yield put({type: "TRANSPORT_ORDERS_LOADED", orders});
 }
 
-
 function* fetchProducts(){
     const products = yield fetch(PRODUCTS_URL).then( res => res.json()).then(data => data.results);
     yield put({type: "PRODUCTS_LOADED", products});
@@ -30,11 +29,18 @@ function* doPostRequest({payload}){
                                                 body: JSON.stringify(payload) 
                                             }).then( res => res.json()).then(data => {
                                                 NotificationManager.success('Se ha creado una orden nueva!', 'Successful!', 12000);
-                                                return data.results;
-                                            }).catch(err=>{
+                                                const output = Object.assign(data, {redirect: true});
+                                                console.log(output);
+                                                return output;
+                                            }).catch(err => {
+                                                console.error(err);
                                                 NotificationManager.error ('Ocurrió un error al intentar crear la orden.', 'Error!', 12000);
                                             });
     yield put({type: "POSTREQUEST_FINISHED", request});
+    yield put({type: "PRODUCTS_RESET"});
+    yield put({type: "PRICE_RESET"});
+    fetchOrders();
+    yield put({type: "KEY_SENT", key:"second"});
 
 }
 
