@@ -1,5 +1,5 @@
-import { put, takeEvery, all } from 'redux-saga/effects';
-import  { USERS_URL, REQUESTS_URL, ORDERS_URL, PRODUCTS_URL, PRICING_URL }  from './resource';
+import { put, takeEvery, all, call, takeLatest } from 'redux-saga/effects';
+import  { USERS_URL, REQUESTS_URL, ORDERS_URL, PRODUCTS_URL, PRICING_URL, LOGIN_URL, LOGOUT_URL, REGISTRATION_URL }  from './resource';
 
 
 function* fetchUsers(){
@@ -48,6 +48,56 @@ function* patchOrder({orderId}){
 
 }
 
+function* login({ payload: { username, password } }){
+	try {
+		const response = yield fetch(LOGIN_URL, { method: 'POST',
+						    															headers: { 'Content-Type': 'application/json' },
+						    															body: JSON.stringify({ username, password })});
+
+		if (response.status >= 200 && response.status < 300) {
+      const {token} = yield response.json();
+      yield put({ type: 'AUTH_SUCCESS', payload: token });
+    	localStorage.setItem('token', token);
+    } else {
+      throw response;
+    }
+	}catch(error){
+		let message;
+    switch (error.status) {
+      case 500: message = 'Internal Server Error'; break;
+      case 400: message = 'Credenciales Inválidas. Por favor intente de nuevo'; break;
+      default: message = 'Something went wrong';
+    }
+    yield put({ type: 'AUTH_FAILURE', payload: message });
+    localStorage.removeItem('token');
+	}
+
+}
+
+function* registration({ payload: { username, email, first_name, last_name, address, phone } }){
+	try {
+		const response = yield fetch(REGISTRATION_URL, { method: 'POST',
+						    															headers: { 'Content-Type': 'application/json' },
+						    															body: JSON.stringify({ username, email, first_name, last_name, profile: {address, phone} })});
+
+		if (response.status >= 200 && response.status < 300) {
+      const {url} = yield response.json();
+      yield put({ type: 'REGISTRATION_SUCCESS', payload: url });
+    } else {
+      throw response;
+    }
+	}catch(error){
+		let message;
+    switch (error.status) {
+      case 500: message = 'Internal Server Error'; break;
+      case 400: message = 'Algunos Campos son Inválidos. Por favor intente de nuevo'; break;
+      default: message = 'Something went wrong';
+    }
+    yield put({ type: 'REGISTRATION_FAILURE', payload: message });
+	}
+
+}
+
 
 function* actionUserWatcher() {
     yield takeEvery('LOADING', fetchUsers);
@@ -77,6 +127,14 @@ function* actionPatchOrderWatcher(){
     yield takeEvery('ORDERS_UPDATING', patchOrder);
 }
 
+function* actionLoginWatcher(){
+    yield takeLatest('AUTH_REQUEST', login);
+}
+
+function* actionRegistrationWatcher(){
+    yield takeLatest('REGISTRATION_REQUEST', registration);
+}
+
 export default function* mySaga(){
-    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher()])
+    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher(), actionLoginWatcher(), actionRegistrationWatcher()])
 }

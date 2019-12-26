@@ -7,6 +7,9 @@ export const REQUESTS_URL = `${root}/requests/`;
 export const PRODUCTS_URL = `${root}/products/`;
 export const PRICING_URL = `${root}/pricing/`;
 export const ORDERS_URL = `${root}/orders/`;
+export const LOGIN_URL = "http://127.0.0.1:8000/login/";
+export const LOGOUT_URL = "http://127.0.0.1:8000/logout/";
+export const REGISTRATION_URL = "http://127.0.0.1:8000/users/";
 
 /*
 
