@@ -17,7 +17,7 @@ class TransportView extends React.Component {
 
     handleAccept(e){
         e.preventDefault();
-        const orderId = e.target.dataset.id
+        const orderId = e.target.dataset.id;
         this.props.updateOrder(orderId);
     }
 

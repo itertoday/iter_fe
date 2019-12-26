@@ -1,11 +1,3 @@
-export function firstReducer(state={'name': 'McArthur'}, action){
-    switch(action.type){
-        case 'RENAME':
-            return { 'name': action.name }
-        default:
-            return state
-    }
-}
 
 const initialFormState = {
     start_date: new Date().toISOString(),
@@ -27,6 +19,11 @@ export function ordersReducer(state={orders:[], transportOrders: []}, action){
                 return {...state, transportOrders: action.orders, loaded: true};
         case 'ORDER_PATCH_DONE':
             return {...state, result: action.result, loaded: true};
+        case 'ORDER_ACCEPTED':
+            const pk = action.payload;
+            return {...state, orders: state.orders.map(order => Object.assign({},
+                    order,
+                    {status: (order.id===pk)?"accepted":order.status} ))}
         default:
             return state;
     }
@@ -36,6 +33,8 @@ export function requestsReducer( state={requests:[], loaded: false, requestForm:
     switch(action.type){
         case 'REQUESTS_LOADED':
             return {...state, requests: action.requests, loaded: false}
+        case 'REQUEST_LOADED':
+            return {...state, requestForm: action.request, loaded: false}
         case 'REQUESTFORM_UPDATE':
             return {...state, requestForm: action.form}
         case 'POSTREQUEST_FINISHED':

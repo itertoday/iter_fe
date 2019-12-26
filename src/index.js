@@ -9,13 +9,13 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import  { firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer } from './reducers';
+import  { requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer } from './reducers';
 import mySaga from './sagas';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import {  NotifyClientReader } from './common';
 
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer } from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 export const Menu = () => {
     return <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -39,13 +39,16 @@ export const Menu = () => {
 }
 
 const sagaMiddleware = createSagaMiddleware();
-let store = createStore( combineReducers({firstReducer, requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer}),
+let store = createStore( combineReducers({requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer}),
                          composeWithDevTools(applyMiddleware(sagaMiddleware)) );
 sagaMiddleware.run(mySaga);
-
-/*const onMessage = (message) => { console.log("well done chiqui", message)}
+const onMessage = (message) => {
+    const fromServer =  JSON.parse(message.data);
+    const payload = fromServer.payload.pk; //This is too much. maybe we can just make the server return what we need
+    store.dispatch({type:'ORDER_ACCEPTED', payload})
+    NotificationManager.success('Han aceptado tu petición!', 'Éxito!', 12000);
+}
 let client = new NotifyClientReader(onMessage);
-client.onMessage = onMessage;*/
 
 ReactDOM.render(<>
     <Provider store = {store}>

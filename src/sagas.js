@@ -8,6 +8,15 @@ function* fetchRequests(){
     yield put({type: "REQUESTS_LOADED", requests});
 }
 
+function* fetchRequest(action){
+    const { id } = action;
+    console.log("fetching Reqeust with id: ", id);
+    const request = yield fetch(`${REQUESTS_URL}${id}`).then( res => res.json());
+    yield put({type: "REQUEST_LOADED", request});
+}
+
+
+
 function* fetchOrders(){
     const orders = yield fetch(CLIENT_ORDERS_URL).then( res => res.json());
     yield put({type: "ORDERS_LOADED", orders});
@@ -36,12 +45,11 @@ function* doPostRequest({payload}){
                                                 console.error(err);
                                                 NotificationManager.error ('Ocurrió un error al intentar crear la orden.', 'Error!', 12000);
                                             });
+    yield put({type: "KEY_SENT", key:"second"});
     yield put({type: "POSTREQUEST_FINISHED", request});
     yield put({type: "PRODUCTS_RESET"});
     yield put({type: "PRICE_RESET"});
     fetchOrders();
-    yield put({type: "KEY_SENT", key:"second"});
-
 }
 
 function* doPostPriceProduct({products}){
@@ -63,6 +71,10 @@ function* patchOrder({orderId}){
 
 function* actionRequestsWatcher(){
     yield takeEvery('REQUESTS_LOADING', fetchRequests);
+}
+
+function* actionRequestWatcher(){
+    yield takeEvery('REQUEST_LOADING', fetchRequest);
 }
 
 function* actionProductsWatcher(){
@@ -90,5 +102,5 @@ function* actionTransportOrdersWatcher(){
 }
 
 export default function* mySaga(){
-    yield all([actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher(), actionTransportOrdersWatcher()])
+    yield all([actionRequestsWatcher(), actionRequestWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher(), actionTransportOrdersWatcher()])
 }

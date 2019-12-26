@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getRequests, getProducts, getOrders, postRequest, updateRequestForm, updateProductItems, postPrice, updateTabKey } from './../../actions';
+import { getRequests, getRequest, getProducts, getOrders, postRequest, updateRequestForm, updateProductItems, postPrice, updateTabKey, loadRequest } from './../../actions';
 import { Tab, Row, Col, Nav, Container, Form, Button, Card } from 'react-bootstrap';
 import { OrderItem } from '../common';
 import { LoadingComponent } from '../../common';
@@ -21,7 +21,6 @@ const ProductItem = (props) => {
                     <Button variant="primary" onClick={props.onPlusProduct} data-product={props.item.id} >  + </Button>
                     <Button variant="secondary" onClick={props.onMinusProduct} data-product={props.item.id} > - </Button>
                     <p>{props.item.quantity}</p>
-
                 </Card.Body>
             </Card>
         </Col>
@@ -118,6 +117,8 @@ class RequestView extends React.Component {
         this.handleMinusProduct = this.handleMinusProduct.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.toOrderView = this.toOrderView.bind(this);
+        this.editOrder = this.editOrder.bind(this);
+        this.deleteOrder = this.deleteOrder.bind(this);
     }
 
     handlePlusProduct(e) {
@@ -179,17 +180,28 @@ class RequestView extends React.Component {
         this.props.getOrders();
     }
 
+    editOrder(e){
+        e.preventDefault();
+        const {id} = e.target.dataset;
+        console.log("called with id", id);
+        this.props.updateTabKey('first');
+        this.props.getRequest(id);
+    }
+
+    deleteOrder(id){
+        console.log("delete order with id", id);
+    }
+
     render() {
         const { userOrders: items, products, requestForm, price, redirect, tabKey } = this.props;
         const summaryOrders = (items.length > 0) ? <ul>
             {items.map((item, i) => {
-                return <li key={i}><OrderItem data={item} readonly={true} /></li>;
+                return <li key={i}><OrderItem data={item} readonly={true} onEdit={this.editOrder} onDelete={this.deleteOrder} /></li>;
             })}
         </ul> : <Card><Card.Body>Aún no ha creado órdenes</Card.Body></Card>
         return (
             <Container className="mt-5">
                 <LoadingRequest isLoaded={!this.props.requestLoading} />
-                <p>Cambio: {this.props.requestRedirect?"yes":"no"}</p>
                 <Tab.Container id="left-tabs-example"  activeKey={tabKey}  defaultKey="first" onSelect={this.handleSelect}>
                     <Row>
                         <Col sm={3}>
@@ -249,6 +261,7 @@ function mapState(state) {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     getRequests,
+    getRequest,
     getProducts,
     getOrders,
     postRequest,
