@@ -109,4 +109,15 @@ export function registrationReducer(state={url:"", registrationError:null}, acti
   }
 }
 
+export function menuReducer(state={token: localStorage.getItem('token'), isAuthenticated: localStorage.getItem('token')?true:false}, action){
+    switch (action.type) {
+	    case 'AUTH_SUCCESS':
+	      return { ...state, isAuthenticated:true, token: action.payload };
+	    case 'LOGOUT_SUCCESS':
+            return { ...state, isAuthenticated:false, token: null };
+	    default:
+	      return state;
+    }
+}
+
 

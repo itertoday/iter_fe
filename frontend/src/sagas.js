@@ -74,6 +74,33 @@ function* login({ payload: { username, password } }){
 
 }
 
+function* logout({ payload: { token } }){
+    console.log("logout function");
+    try {
+        const response = yield fetch(LOGOUT_URL, 
+            {   method: 'POST',
+		        headers: { 'Content-Type': 'application/json', 'Authorization': `token ${token}` },
+		    });
+
+        if (response.status >= 200 && response.status < 300) {
+            //const {token} = yield response.json();
+            console.log("LOGOUT_SUCCESS");
+            yield put({ type: 'LOGOUT_SUCCESS' });
+            localStorage.removeItem('token');
+        } else {
+            throw response;
+        }
+	}catch(error){
+		let message;
+        switch (error.status) {
+        case 500: message = 'Internal Server Error'; break;
+        case 400: message = 'Credenciales Inválidas. Por favor intente de nuevo'; break;
+        default: message = 'Something went wrong';
+        }
+        yield put({ type: 'LOGOUT_FAILURE', payload: message });
+	}
+}
+
 function* registration({ payload: { username, email, first_name, last_name, address, phone } }){
 	try {
 		const response = yield fetch(REGISTRATION_URL, { method: 'POST',
@@ -131,10 +158,14 @@ function* actionLoginWatcher(){
     yield takeLatest('AUTH_REQUEST', login);
 }
 
+function* actionLogoutWatcher(){
+    yield takeLatest('LOGOUT_REQUEST', logout);
+}
+
 function* actionRegistrationWatcher(){
     yield takeLatest('REGISTRATION_REQUEST', registration);
 }
 
 export default function* mySaga(){
-    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher(), actionLoginWatcher(), actionRegistrationWatcher()])
+    yield all([actionUserWatcher(), actionRequestsWatcher(), actionProductsWatcher(), actionPostRequestsWatcher(), actionPostPriceProductWatcher(), actionOrdersWatcher(), actionPatchOrderWatcher(), actionLoginWatcher(), actionRegistrationWatcher(), actionLogoutWatcher()])
 }
