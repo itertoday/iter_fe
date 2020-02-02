@@ -3,7 +3,6 @@ export const getRequests = () => {
 }
 
 export const getRequest = (id) => {
-    console.log("getRequest ->", id);
     return {type: 'REQUEST_LOADING', id }
 }
 
@@ -27,6 +26,10 @@ export const postPrice = (payload) => {
     return {type: 'PRICE_REQUEST', products:payload}
 }
 
+export const deleteRequest = (id) => {
+    return {type: 'DELETEREQUEST_STARTED', id }
+}
+
 export const updateProductItems = (newProducts) =>{
     return {type: 'PRODUCT_UPDATE', products: newProducts}
 }
@@ -42,3 +45,4 @@ export const updateOrder = (orderId) => {
 export const updateTabKey = (key) => {
     return { type: 'KEY_SENT', key }
 }
+

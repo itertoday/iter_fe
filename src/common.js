@@ -6,10 +6,7 @@ const {notification} = server;
 
 export const LoadingComponent = (Component) => {
     return function Loading({ isLoaded, ...props }) {
-        if (isLoaded) {
-            return <Component {...props} />
-        }
-        return <Spinner />
+        return (isLoaded)? <Component {...props} />:<Spinner />
     };
 }
 

@@ -1,7 +1,7 @@
 
 const initialFormState = {
-    start_date: new Date().toISOString(),
-    end_date: new Date().toISOString(),
+    start_date: new Date().toISOString().replace('Z', ''),
+    end_date: new Date().toISOString().replace('Z', ''),
     repeat: false,
     city: 'empty',
     address: '',
@@ -34,13 +34,15 @@ export function requestsReducer( state={requests:[], loaded: false, requestForm:
         case 'REQUESTS_LOADED':
             return {...state, requests: action.requests, loaded: false}
         case 'REQUEST_LOADED':
-            return {...state, requestForm: action.request, loaded: false}
+            return {...state, requestForm: {...action.request, user: action.request.user.id}, loaded: false}
         case 'REQUESTFORM_UPDATE':
             return {...state, requestForm: action.form}
         case 'POSTREQUEST_FINISHED':
             return {...state, requestForm: initialFormState, redirect:action.request.redirect, loaded: false}
         case 'POSTREQUEST_STARTED':
             return {...state, loaded: true}
+        case 'DELETEREQUEST_LOADED':
+            return state;
         default:
             return state;
     }
@@ -49,7 +51,7 @@ export function requestsReducer( state={requests:[], loaded: false, requestForm:
 export function productsReducer( state={products:[], loaded: false}, action){
     switch(action.type){
         case 'PRODUCTS_LOADED':
-            const products = action.products.map(product => Object.assign({}, product, {quantity:0} ))
+            const products = action.products.map(product => Object.assign({}, product, (product.quantity)?{quantity:product.quantity}:{quantity:0}))
             return { ...state, products, loaded: true }
         case 'PRODUCT_UPDATE':
                 const newProducts = action.products;

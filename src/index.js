@@ -4,11 +4,13 @@ import './index.css';
 import Home from './components/home';
 import { Login, Register } from './components/login';
 import Dashboard  from './components/dashboard';
+import Dash  from './dash';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
+import LoadingForm  from './components/requests/requestForm';
 import  { requestsReducer, productsReducer, priceReducer, ordersReducer, tabReducer } from './reducers';
 import mySaga from './sagas';
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -60,6 +62,8 @@ ReactDOM.render(<>
                 </Route>
                 <Route path="/register" component={Register} />
                 <Route path="/dashboard" component={Dashboard} />
+                <Route path="/dash" component={Dash} />
+                <Route path={["/request/:requestId", "/request"]} render={(props) => <LoadingForm {...props} isLoaded={true} />}  />
                 <Route path="/">
                     <Home />
                 </Route>
